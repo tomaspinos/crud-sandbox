@@ -7,13 +7,7 @@ import com.vaadin.shared.communication.PushMode;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +63,8 @@ public class VaadinUI extends UI {
     private void showMain() {
         // build layout
         HorizontalLayout logoutBar = new HorizontalLayout(logoutBtn);
+        logoutBar.setWidth(100, Unit.PERCENTAGE);
+        logoutBar.setComponentAlignment(logoutBtn, Alignment.TOP_RIGHT);
         HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
         VerticalLayout mainLayout = new VerticalLayout(logoutBar, actions, grid, editor);
         setContent(mainLayout);
