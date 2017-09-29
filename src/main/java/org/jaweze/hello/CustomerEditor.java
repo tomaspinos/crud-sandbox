@@ -10,6 +10,8 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import org.jaweze.hello.security.CustomRoles;
+import org.jaweze.hello.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -25,85 +27,97 @@ import org.springframework.beans.factory.annotation.Autowired;
 @UIScope
 public class CustomerEditor extends VerticalLayout {
 
-	private final CustomerRepository repository;
+    private final CustomerRepository repository;
 
-	/**
-	 * The currently edited customer
-	 */
-	private Customer customer;
+    /**
+     * The currently edited customer
+     */
+    private Customer customer;
 
-	/* Fields to edit properties in Customer entity */
-	TextField firstName = new TextField("First name");
-	TextField lastName = new TextField("Last name");
+    /* Fields to edit properties in Customer entity */
+    TextField firstName = new TextField("First name");
+    TextField lastName = new TextField("Last name");
 
-	/* Action buttons */
-	Button save = new Button("Save", FontAwesome.SAVE);
-	Button cancel = new Button("Cancel");
-	Button delete = new Button("Delete", FontAwesome.TRASH_O);
-	CssLayout actions = new CssLayout(save, cancel, delete);
+    /* Action buttons */
+    Button save = new Button("Save", FontAwesome.SAVE);
+    Button cancel = new Button("Cancel");
+    Button delete = new Button("Delete", FontAwesome.TRASH_O);
+    CssLayout actions = new CssLayout(save, cancel, delete);
 
-	Binder<Customer> binder = new Binder<>(Customer.class);
+    Binder<Customer> binder = new Binder<>(Customer.class);
 
-	@Autowired
-	public CustomerEditor(CustomerRepository repository) {
-		this.repository = repository;
+    @Autowired
+    public CustomerEditor(CustomerRepository repository) {
+        this.repository = repository;
 
-		addComponents(firstName, lastName, actions);
+        addComponents(firstName, lastName, actions);
 
-		// bind using naming convention
-		binder.bindInstanceFields(this);
+        // bind using naming convention
+        binder.bindInstanceFields(this);
 
-		// Configure and style components
-		setSpacing(true);
-		actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        // Configure and style components
+        setSpacing(true);
+        actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
-		// wire action buttons to save, delete and reset
-		save.addClickListener(e -> repository.save(customer));
-		delete.addClickListener(e -> repository.delete(customer));
-		cancel.addClickListener(e -> editCustomer(customer));
-		setVisible(false);
-	}
+        save.setStyleName(ValoTheme.BUTTON_PRIMARY);
+        save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        save.addClickListener(e -> repository.save(customer));
 
-	public interface ChangeHandler {
+        cancel.addClickListener(e -> editCustomer(customer));
 
-		void onChange();
-	}
+        delete.addClickListener(e -> repository.delete(customer));
 
-	public final void editCustomer(Customer c) {
-		if (c == null) {
-			setVisible(false);
-			return;
-		}
-		final boolean persisted = c.getId() != null;
-		if (persisted) {
-			// Find fresh entity for editing
-			customer = repository.findOne(c.getId());
-		}
-		else {
-			customer = c;
-		}
-		cancel.setVisible(persisted);
+        setVisible(false);
+    }
 
-		// Bind customer properties to similarly named fields
-		// Could also use annotation or "manual binding" or programmatically
-		// moving values from fields to entities before saving
-		binder.setBean(customer);
+    public interface ChangeHandler {
 
-		setVisible(true);
+        void onChange();
+    }
 
-		// A hack to ensure the whole form is visible
-		save.focus();
-		// Select all text in firstName field automatically
-		firstName.selectAll();
-	}
+    public final void editCustomer(Customer c) {
+        if (c == null) {
+            setVisible(false);
+            return;
+        }
+        final boolean persisted = c.getId() != null;
+        if (persisted) {
+            // Find fresh entity for editing
+            customer = repository.findOne(c.getId());
+        } else {
+            customer = c;
+        }
+        cancel.setVisible(persisted);
 
-	public void setChangeHandler(ChangeHandler h) {
-		// ChangeHandler is notified when either save or delete
-		// is clicked
-		save.addClickListener(e -> h.onChange());
-		delete.addClickListener(e -> h.onChange());
-	}
+        checkAuthorization();
 
+        // Bind customer properties to similarly named fields
+        // Could also use annotation or "manual binding" or programmatically
+        // moving values from fields to entities before saving
+        binder.setBean(customer);
+
+        setVisible(true);
+
+        // A hack to ensure the whole form is visible
+        save.focus();
+        // Select all text in firstName field automatically
+        firstName.selectAll();
+    }
+
+    public void setChangeHandler(ChangeHandler h) {
+        // ChangeHandler is notified when either save or delete
+        // is clicked
+        save.addClickListener(e -> h.onChange());
+        delete.addClickListener(e -> h.onChange());
+    }
+
+    private void checkAuthorization() {
+        boolean isManager = SecurityUtils.hasRole(CustomRoles.MANAGER);
+
+        firstName.setEnabled(isManager);
+        lastName.setEnabled(isManager);
+        save.setEnabled(isManager);
+        cancel.setEnabled(isManager);
+        delete.setEnabled(isManager);
+    }
 }
