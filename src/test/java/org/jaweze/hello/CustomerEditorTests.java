@@ -2,6 +2,7 @@ package org.jaweze.hello;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.jaweze.hello.model.Customer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,7 +46,7 @@ public class CustomerEditorTests {
 	}
 
 	private void customerDataWasFilled() {
-		this.editor.editCustomer(new Customer(FIRST_NAME, LAST_NAME));
+		this.editor.editCustomer(new Customer(FIRST_NAME, LAST_NAME, null, null, null));
 	}
 
 	private TypeSafeMatcher<Customer> customerMatchesEditorFields() {

@@ -5,14 +5,16 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.model.MarriageStatus;
+import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;
 import org.jaweze.hello.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
 
 /**
  * A simple example to introduce building forms. As your real application is probably much
@@ -37,6 +39,9 @@ public class CustomerEditor extends VerticalLayout {
     /* Fields to edit properties in Customer entity */
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
+    DateField birthDate = new DateField("Birth date");
+    ComboBox<Sex> sex = new ComboBox<>("Sex", Arrays.asList(Sex.values()));
+    ComboBox<MarriageStatus> marriageStatus = new ComboBox<>("Marriage status", Arrays.asList(MarriageStatus.values()));
 
     /* Action buttons */
     Button save = new Button("Save", FontAwesome.SAVE);
@@ -50,7 +55,37 @@ public class CustomerEditor extends VerticalLayout {
     public CustomerEditor(CustomerRepository repository) {
         this.repository = repository;
 
-        addComponents(firstName, lastName, actions);
+        sex.setItemCaptionGenerator(item -> {
+            switch (item) {
+                case MALE:
+                    return "Male";
+                case FEMALE:
+                    return "Female";
+                case OTHER:
+                    return "Other";
+                default:
+                    throw new IllegalStateException();
+            }
+        });
+
+        marriageStatus.setItemCaptionGenerator(item -> {
+            switch (item) {
+                case SINGLE:
+                    return "Single";
+                case MARRIED:
+                    return "Married";
+                case DIVORCED:
+                    return "Divorced";
+                case WIDOWED:
+                    return "Widowed";
+                case OTHER:
+                    return "Other";
+                default:
+                    throw new IllegalStateException();
+            }
+        });
+
+        addComponents(firstName, lastName, birthDate, sex, marriageStatus, actions);
 
         // bind using naming convention
         binder.bindInstanceFields(this);

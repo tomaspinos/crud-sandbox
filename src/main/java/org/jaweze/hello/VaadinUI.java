@@ -8,6 +8,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class VaadinUI extends UI {
         setErrorHandler(this::handleError);
 
         grid.setHeight(300, Unit.PIXELS);
-        grid.setColumns("id", "firstName", "lastName");
+        grid.setColumns("id", "firstName", "lastName", "birthDate");
 
         filter.setPlaceholder("Filter by last name");
 
@@ -89,7 +90,7 @@ public class VaadinUI extends UI {
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "")));
+        addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "", null, null, null)));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
