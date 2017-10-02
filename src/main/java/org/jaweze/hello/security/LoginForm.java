@@ -6,24 +6,28 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import org.jaweze.hello.utils.Messages;
 
 public class LoginForm extends VerticalLayout {
 
-    public LoginForm(LoginCallback callback) {
+    private final Messages messages;
+
+    public LoginForm(LoginCallback callback, Messages messages) {
+        this.messages = messages;
         setMargin(true);
         setSpacing(true);
 
-        TextField username = new TextField("Username");
+        TextField username = new TextField(messages.get("login.username"));
         addComponent(username);
 
-        PasswordField password = new PasswordField("Password");
+        PasswordField password = new PasswordField(messages.get("login.password"));
         addComponent(password);
 
-        Button login = new Button("Login", evt -> {
+        Button login = new Button(messages.get("login.login"), evt -> {
             String pword = password.getValue();
             password.setValue("");
             if (!callback.login(username.getValue(), pword)) {
-                Notification.show("Login failed");
+                Notification.show(messages.get("login.failure"));
                 username.focus();
             }
         });

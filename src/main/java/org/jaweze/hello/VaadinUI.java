@@ -11,6 +11,7 @@ import com.vaadin.ui.*;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
+import org.jaweze.hello.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,20 +37,24 @@ public class VaadinUI extends UI {
     private final Button logoutBtn;
     private final Button addNewBtn;
 
+    private Messages messages;
+
+
     @Autowired
-    public VaadinUI(AuthenticationManager authenticationManager, CustomerRepository repo, CustomerEditor editor) {
+    public VaadinUI(AuthenticationManager authenticationManager, CustomerRepository repo, CustomerEditor editor, Messages messages) {
         this.authenticationManager = authenticationManager;
         this.repo = repo;
         this.editor = editor;
+        this.messages = messages;
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
-        this.logoutBtn = new Button("Logout");
-        this.addNewBtn = new Button("New customer");
+        this.logoutBtn = new Button(messages.get("main_screen.logout"));
+        this.addNewBtn = new Button(messages.get("main_screen.new_customer"));
     }
 
     @Override
     protected void init(VaadinRequest request) {
-        getPage().setTitle("CRUD with security");
+        getPage().setTitle(messages.get("main_screen.title"));
         if (SecurityUtils.isLoggedIn()) {
             showMain();
         } else {
@@ -58,7 +63,7 @@ public class VaadinUI extends UI {
     }
 
     private void showLogin() {
-        setContent(new LoginForm(this::login));
+        setContent(new LoginForm(this::login, messages));
     }
 
     private void showMain() {
@@ -76,7 +81,7 @@ public class VaadinUI extends UI {
         grid.setHeight(300, Unit.PIXELS);
         grid.setColumns("id", "firstName", "lastName", "birthDate");
 
-        filter.setPlaceholder("Filter by last name");
+        filter.setPlaceholder(messages.get("main_screen.filter.desc"));
 
         // Hook logic to components
 
@@ -133,7 +138,7 @@ public class VaadinUI extends UI {
     private void handleError(com.vaadin.server.ErrorEvent event) {
         Throwable t = DefaultErrorHandler.findRelevantThrowable(event.getThrowable());
         if (t instanceof AccessDeniedException) {
-            Notification.show("You do not have permission to perform this operation", Notification.Type.WARNING_MESSAGE);
+            Notification.show(messages.get("main_screen.no_permission"), Notification.Type.WARNING_MESSAGE);
         } else {
             DefaultErrorHandler.doDefault(event);
         }
