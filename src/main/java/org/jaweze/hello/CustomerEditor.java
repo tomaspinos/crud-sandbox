@@ -12,6 +12,7 @@ import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;
 import org.jaweze.hello.security.SecurityUtils;
+import org.jaweze.hello.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
@@ -31,59 +32,47 @@ public class CustomerEditor extends VerticalLayout {
 
     private final CustomerRepository repository;
 
+    private final Messages messages;
+
     /**
      * The currently edited customer
      */
     private Customer customer;
 
     /* Fields to edit properties in Customer entity */
-    TextField firstName = new TextField("First name");
-    TextField lastName = new TextField("Last name");
-    DateField birthDate = new DateField("Birth date");
-    ComboBox<Sex> sex = new ComboBox<>("Sex", Arrays.asList(Sex.values()));
-    ComboBox<MarriageStatus> marriageStatus = new ComboBox<>("Marriage status", Arrays.asList(MarriageStatus.values()));
+    TextField firstName;
+    TextField lastName;
+    DateField birthDate;
+    ComboBox<Sex> sex;
+    ComboBox<MarriageStatus> marriageStatus;
 
     /* Action buttons */
-    Button save = new Button("Save", FontAwesome.SAVE);
-    Button cancel = new Button("Cancel");
-    Button delete = new Button("Delete", FontAwesome.TRASH_O);
-    CssLayout actions = new CssLayout(save, cancel, delete);
+    Button save;
+    Button cancel;
+    Button delete;
+    CssLayout actions;
 
     Binder<Customer> binder = new Binder<>(Customer.class);
 
     @Autowired
-    public CustomerEditor(CustomerRepository repository) {
+    public CustomerEditor(CustomerRepository repository, Messages messages) {
         this.repository = repository;
+        this.messages = messages;
 
-        sex.setItemCaptionGenerator(item -> {
-            switch (item) {
-                case MALE:
-                    return "Male";
-                case FEMALE:
-                    return "Female";
-                case OTHER:
-                    return "Other";
-                default:
-                    throw new IllegalStateException();
-            }
-        });
+        firstName = new TextField(messages.get("customer_editor.firstName"));
+        lastName = new TextField(messages.get("customer_editor.lastName"));
+        birthDate = new DateField(messages.get("customer_editor.birthDate"));
+        sex = new ComboBox<>(messages.get("customer_editor.sex"), Arrays.asList(Sex.values()));
+        marriageStatus = new ComboBox<>(messages.get("customer_editor.marriageStatus"), Arrays.asList(MarriageStatus.values()));
 
-        marriageStatus.setItemCaptionGenerator(item -> {
-            switch (item) {
-                case SINGLE:
-                    return "Single";
-                case MARRIED:
-                    return "Married";
-                case DIVORCED:
-                    return "Divorced";
-                case WIDOWED:
-                    return "Widowed";
-                case OTHER:
-                    return "Other";
-                default:
-                    throw new IllegalStateException();
-            }
-        });
+        save = new Button(messages.get("customer_editor.save"), FontAwesome.SAVE);
+        cancel = new Button(messages.get("customer_editor.cancel"));
+        delete = new Button(messages.get("customer_editor.delete"), FontAwesome.TRASH_O);
+        actions = new CssLayout(save, cancel, delete);
+
+        sex.setItemCaptionGenerator(item -> messages.get("codebook.sex." + item.name()));
+
+        marriageStatus.setItemCaptionGenerator(item -> messages.get("codebook.marriageStatus." + item.name()));
 
         addComponents(firstName, lastName, birthDate, sex, marriageStatus, actions);
 

@@ -6,6 +6,7 @@ import com.vaadin.spring.boot.VaadinAutoConfiguration;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
+import org.jaweze.hello.utils.Messages;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,9 @@ public class VaadinUITests {
 	@Autowired
     CustomerRepository repository;
 
+	@Autowired
+	Messages messages;
+
 	VaadinRequest vaadinRequest = Mockito.mock(VaadinRequest.class);
 
 	CustomerEditor editor;
@@ -39,9 +43,9 @@ public class VaadinUITests {
 
 	@Before
 	public void setup() {
-		this.editor = new CustomerEditor(this.repository);
+		this.editor = new CustomerEditor(repository, messages);
 		// TODO security
-		this.vaadinUI = new VaadinUI(null, this.repository, editor, null);
+		this.vaadinUI = new VaadinUI(null, repository, editor, messages);
 	}
 
 	@Test

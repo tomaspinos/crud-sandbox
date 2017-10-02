@@ -30,15 +30,14 @@ public class VaadinUI extends UI {
 
     private final CustomerEditor editor;
 
+    private final Messages messages;
+
     final Grid<Customer> grid;
 
     final TextField filter;
 
     private final Button logoutBtn;
     private final Button addNewBtn;
-
-    private Messages messages;
-
 
     @Autowired
     public VaadinUI(AuthenticationManager authenticationManager, CustomerRepository repo, CustomerEditor editor, Messages messages) {
