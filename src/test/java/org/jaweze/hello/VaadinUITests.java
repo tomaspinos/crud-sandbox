@@ -41,7 +41,7 @@ public class VaadinUITests {
 	public void setup() {
 		this.editor = new CustomerEditor(this.repository);
 		// TODO security
-		this.vaadinUI = new VaadinUI(null, this.repository, editor);
+		this.vaadinUI = new VaadinUI(null, this.repository, editor, null);
 	}
 
 	@Test
