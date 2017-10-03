@@ -9,6 +9,7 @@ import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
 import org.jaweze.hello.utils.Messages;

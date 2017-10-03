@@ -3,6 +3,7 @@ package org.jaweze.hello;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.model.CustomerRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

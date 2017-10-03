@@ -8,6 +8,7 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;

@@ -1,6 +1,5 @@
-package org.jaweze.hello;
+package org.jaweze.hello.model;
 
-import org.jaweze.hello.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

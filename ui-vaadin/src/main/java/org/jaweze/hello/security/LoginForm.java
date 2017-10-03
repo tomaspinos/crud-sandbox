@@ -1,11 +1,7 @@
 package org.jaweze.hello.security;
 
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.PasswordField;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.jaweze.hello.utils.Messages;
 
 public class LoginForm extends VerticalLayout {

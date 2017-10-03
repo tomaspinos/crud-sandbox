@@ -4,6 +4,7 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.utils.Messages;
