@@ -32,8 +32,13 @@ public class CustomerController {
         return repository.getOne(customerId);
     }
 
+    @PostMapping("/customer")
+    public Customer create(@RequestBody Customer customer) {
+        return repository.save(customer);
+    }
+
     @PutMapping("/customer")
-    public Customer save(@RequestBody Customer customer) {
+    public Customer update(@RequestBody Customer customer) {
         return repository.save(customer);
     }
 
