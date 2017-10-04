@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -17,7 +18,7 @@ public class Customer {
 
 	private String lastName;
 
-	private LocalDate birthDate;
+	private Date birthDate;
 
     @Enumerated(EnumType.STRING)
 	private Sex sex;
@@ -29,6 +30,10 @@ public class Customer {
 	}
 
 	public Customer(String firstName, String lastName, LocalDate birthDate, Sex sex, MarriageStatus marriageStatus) {
+		this(firstName, lastName, birthDate != null ? java.sql.Date.valueOf(birthDate) : null, sex, marriageStatus);
+	}
+
+	public Customer(String firstName, String lastName, Date birthDate, Sex sex, MarriageStatus marriageStatus) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthDate = birthDate;
@@ -56,11 +61,11 @@ public class Customer {
 		this.lastName = lastName;
 	}
 
-    public LocalDate getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
 

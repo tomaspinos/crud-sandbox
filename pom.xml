@@ -23,6 +23,7 @@
     <modules>
         <module>model</module>
         <module>rest-api</module>
+        <module>rest-api-client</module>
         <module>ui-vaadin</module>
     </modules>
 

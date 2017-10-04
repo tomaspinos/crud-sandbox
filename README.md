@@ -7,5 +7,5 @@ Example basen on:
   (https://vaadin.com/blog/a-hybrid-approach-to-spring-security-in-vaadin-applications)
 
 REST API documentation:
-- http://localhost:8080/crud/v2/api-docs
-- http://localhost:8080/crud/swagger-ui.html
+- http://localhost:8081/crud/v2/api-docs
+- http://localhost:8081/crud/swagger-ui.html
