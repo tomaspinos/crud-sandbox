@@ -1,4 +1,4 @@
-package org.jaweze.hello;
+package org.jaweze.hello.ui;
 
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
@@ -7,8 +7,8 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
+import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;
@@ -31,7 +31,7 @@ import java.util.Arrays;
 @UIScope
 public class CustomerEditor extends VerticalLayout {
 
-    private final CustomerRepository repository;
+    private final CustomerApiClient customerApiClient;
 
     private final Messages messages;
 
@@ -56,8 +56,8 @@ public class CustomerEditor extends VerticalLayout {
     Binder<Customer> binder = new Binder<>(Customer.class);
 
     @Autowired
-    public CustomerEditor(CustomerRepository repository, Messages messages) {
-        this.repository = repository;
+    public CustomerEditor(CustomerApiClient customerApiClient, Messages messages) {
+        this.customerApiClient = customerApiClient;
         this.messages = messages;
 
         firstName = new TextField(messages.get("customer_editor.firstName"));
@@ -86,11 +86,11 @@ public class CustomerEditor extends VerticalLayout {
 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e -> repository.save(customer));
+        save.addClickListener(e -> customerApiClient.update(customer));
 
         cancel.addClickListener(e -> editCustomer(customer));
 
-        delete.addClickListener(e -> repository.delete(customer));
+        delete.addClickListener(e -> customerApiClient.delete(customer.getId()));
 
         setVisible(false);
     }
@@ -108,7 +108,7 @@ public class CustomerEditor extends VerticalLayout {
         final boolean persisted = c.getId() != null;
         if (persisted) {
             // Find fresh entity for editing
-            customer = repository.findOne(c.getId());
+            customer = customerApiClient.getById(c.getId()).get();
         } else {
             customer = c;
         }

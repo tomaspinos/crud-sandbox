@@ -9,3 +9,9 @@ Example basen on:
 REST API documentation:
 - http://localhost:8081/crud/v2/api-docs
 - http://localhost:8081/crud/swagger-ui.html
+
+REST API trace log:
+- http://localhost:8081/crud/trace
+
+UI:
+- http://localhost:8080

@@ -1,4 +1,4 @@
-package org.jaweze.hello;
+package org.jaweze.hello.ui;
 
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.server.VaadinRequest;
@@ -8,8 +8,8 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
 import org.jaweze.hello.utils.Messages;
@@ -20,14 +20,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 
 @SpringUI
 public class VaadinUI extends UI {
 
     private final AuthenticationManager authenticationManager;
 
-    private final CustomerRepository repo;
+    private final CustomerApiClient customerApiClient;
 
     private final CustomerEditor editor;
 
@@ -41,9 +40,9 @@ public class VaadinUI extends UI {
     private final Button addNewBtn;
 
     @Autowired
-    public VaadinUI(AuthenticationManager authenticationManager, CustomerRepository repo, CustomerEditor editor, Messages messages) {
+    public VaadinUI(AuthenticationManager authenticationManager, CustomerApiClient customerApiClient, CustomerEditor editor, Messages messages) {
         this.authenticationManager = authenticationManager;
-        this.repo = repo;
+        this.customerApiClient = customerApiClient;
         this.editor = editor;
         this.messages = messages;
         this.grid = new Grid<>(Customer.class);
@@ -145,10 +144,6 @@ public class VaadinUI extends UI {
     }
 
     void listCustomers(String filterText) {
-        if (StringUtils.isEmpty(filterText)) {
-            grid.setItems(repo.findAll());
-        } else {
-            grid.setItems(repo.findByLastNameStartsWithIgnoreCase(filterText));
-        }
+        grid.setItems(customerApiClient.getAll(filterText));
     }
 }

@@ -1,10 +1,13 @@
 package org.jaweze.hello.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -18,7 +21,9 @@ public class Customer {
 
 	private String lastName;
 
-	private Date birthDate;
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
+	private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
 	private Sex sex;
@@ -30,10 +35,6 @@ public class Customer {
 	}
 
 	public Customer(String firstName, String lastName, LocalDate birthDate, Sex sex, MarriageStatus marriageStatus) {
-		this(firstName, lastName, birthDate != null ? java.sql.Date.valueOf(birthDate) : null, sex, marriageStatus);
-	}
-
-	public Customer(String firstName, String lastName, Date birthDate, Sex sex, MarriageStatus marriageStatus) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthDate = birthDate;
@@ -61,11 +62,11 @@ public class Customer {
 		this.lastName = lastName;
 	}
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

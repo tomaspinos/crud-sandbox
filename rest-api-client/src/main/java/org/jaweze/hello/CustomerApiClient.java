@@ -16,4 +16,6 @@ public interface CustomerApiClient {
     void update(Customer customer);
 
     void delete(long customerId);
+
+    void delete(Customer customer);
 }

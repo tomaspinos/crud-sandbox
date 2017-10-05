@@ -1,10 +1,10 @@
-package org.jaweze.hello;
+package org.jaweze.hello.ui;
 
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.boot.VaadinAutoConfiguration;
+import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.model.CustomerRepository;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.utils.Messages;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 public class VaadinUITests {
 
 	@Autowired
-    CustomerRepository repository;
+	CustomerApiClient customerApiClient;
 
 	@Autowired
 	Messages messages;
@@ -44,14 +44,14 @@ public class VaadinUITests {
 
 	@Before
 	public void setup() {
-		this.editor = new CustomerEditor(repository, messages);
+		this.editor = new CustomerEditor(customerApiClient, messages);
 		// TODO security
-		this.vaadinUI = new VaadinUI(null, repository, editor, messages);
+		this.vaadinUI = new VaadinUI(null, customerApiClient, editor, messages);
 	}
 
 	@Test
 	public void shouldInitializeTheGridWithCustomerRepositoryData() {
-		int customerCount = (int) this.repository.count();
+		int customerCount = (int) this.customerApiClient.getAll(null).size();
 
 		vaadinUI.init(this.vaadinRequest);
 
@@ -66,7 +66,7 @@ public class VaadinUITests {
 
 	@Test
 	public void shouldFillOutTheGridWithNewData() {
-		int initialCustomerCount = (int) this.repository.count();
+		int initialCustomerCount = (int) this.customerApiClient.getAll(null).size();
 		this.vaadinUI.init(this.vaadinRequest);
 		customerDataWasFilled(editor, "Marcin", "Grzejszczak");
 
@@ -83,7 +83,7 @@ public class VaadinUITests {
 	@Test
 	public void shouldFilterOutTheGridWithTheProvidedLastName() {
 		this.vaadinUI.init(this.vaadinRequest);
-		this.repository.save(new Customer("Josh", "Long", LocalDate.of(1070, Month.MAY, 1), Sex.MALE, MarriageStatus.SINGLE));
+		this.customerApiClient.update(new Customer("Josh", "Long", LocalDate.of(1070, Month.MAY, 1), Sex.MALE, MarriageStatus.SINGLE));
 
 		vaadinUI.listCustomers("Long");
 
@@ -120,15 +120,15 @@ public class VaadinUITests {
 	static class Config {
 
 		@Autowired
-		CustomerRepository repository;
+		CustomerApiClient customerApiClient;
 
 		@PostConstruct
 		public void initializeData() {
-			this.repository.save(new Customer("Jack", "Bauer", LocalDate.of(1970, Month.JANUARY, 1), Sex.MALE, MarriageStatus.SINGLE));
-			this.repository.save(new Customer("Chloe", "O'Brian", LocalDate.of(1971, Month.FEBRUARY, 3), Sex.FEMALE, MarriageStatus.SINGLE));
-			this.repository.save(new Customer("Kim", "Bauer", LocalDate.of(1972, Month.MARCH, 5), Sex.FEMALE, MarriageStatus.MARRIED));
-			this.repository.save(new Customer("David", "Palmer", LocalDate.of(1973, Month.APRIL, 7), Sex.MALE, MarriageStatus.DIVORCED));
-			this.repository.save(new Customer("Michelle", "Dessler", LocalDate.of(1974, Month.MAY, 9), Sex.FEMALE, MarriageStatus.WIDOWED));
+			this.customerApiClient.create(new Customer("Jack", "Bauer", LocalDate.of(1970, Month.JANUARY, 1), Sex.MALE, MarriageStatus.SINGLE));
+			this.customerApiClient.create(new Customer("Chloe", "O'Brian", LocalDate.of(1971, Month.FEBRUARY, 3), Sex.FEMALE, MarriageStatus.SINGLE));
+			this.customerApiClient.create(new Customer("Kim", "Bauer", LocalDate.of(1972, Month.MARCH, 5), Sex.FEMALE, MarriageStatus.MARRIED));
+			this.customerApiClient.create(new Customer("David", "Palmer", LocalDate.of(1973, Month.APRIL, 7), Sex.MALE, MarriageStatus.DIVORCED));
+			this.customerApiClient.create(new Customer("Michelle", "Dessler", LocalDate.of(1974, Month.MAY, 9), Sex.FEMALE, MarriageStatus.WIDOWED));
 		}
 	}
 }

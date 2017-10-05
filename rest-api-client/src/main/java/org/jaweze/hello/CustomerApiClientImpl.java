@@ -45,4 +45,9 @@ public class CustomerApiClientImpl implements CustomerApiClient {
     public void delete(long customerId) {
         restTemplate.delete(url + "/customer/" + customerId);
     }
+
+    @Override
+    public void delete(Customer customer) {
+        delete(customer.getId());
+    }
 }

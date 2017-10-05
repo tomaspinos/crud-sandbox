@@ -1,9 +1,9 @@
-package org.jaweze.hello;
+package org.jaweze.hello.ui;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
+import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.model.CustomerRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ public class CustomerEditorTests {
 	private static final String LAST_NAME = "Grzejszczak";
 
 	@Mock
-    CustomerRepository customerRepository;
+	CustomerApiClient customerApiClient;
 	@InjectMocks
     CustomerEditor editor;
 
@@ -32,7 +32,7 @@ public class CustomerEditorTests {
 
 		this.editor.save.click();
 
-		then(this.customerRepository).should().save(argThat(customerMatchesEditorFields()));
+		then(this.customerApiClient).should().update(argThat(customerMatchesEditorFields()));
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class CustomerEditorTests {
 
 		editor.delete.click();
 
-		then(this.customerRepository).should().delete(argThat(customerMatchesEditorFields()));
+		then(this.customerApiClient).should().delete(argThat(customerMatchesEditorFields()));
 	}
 
 	private void customerDataWasFilled() {

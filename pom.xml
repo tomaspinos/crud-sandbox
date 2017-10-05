@@ -22,6 +22,7 @@
 
     <modules>
         <module>model</module>
+        <module>repository-jpa</module>
         <module>rest-api</module>
         <module>rest-api-client</module>
         <module>ui-vaadin</module>
@@ -32,6 +33,16 @@
             <dependency>
                 <groupId>org.jaweze</groupId>
                 <artifactId>model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jaweze</groupId>
+                <artifactId>repository-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jaweze</groupId>
+                <artifactId>rest-api-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

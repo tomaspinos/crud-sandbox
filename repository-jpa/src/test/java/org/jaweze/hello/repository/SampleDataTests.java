@@ -1,6 +1,5 @@
-package org.jaweze.hello;
+package org.jaweze.hello.repository;
 
-import org.jaweze.hello.model.CustomerRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +8,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+@SpringBootTest(classes = SampleDataTests.class)
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = UiVaadinApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class UiVaadinApplicationTests {
+public class SampleDataTests {
 
 	@Autowired
 	private CustomerRepository repository;
 
 	@Test
 	public void shouldFillOutComponentsWithDataWhenTheApplicationIsStarted() {
-		then(this.repository.count()).isEqualTo(5);
+		then(repository.count()).isEqualTo(5);
 	}
 
 	@Test
 	public void shouldFindTwoBauerCustomers() {
-		then(this.repository.findByLastNameStartsWithIgnoreCase("Bauer")).hasSize(2);
+		then(repository.findByLastNameStartsWithIgnoreCase("Bauer")).hasSize(2);
 	}
 }

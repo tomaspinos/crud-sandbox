@@ -1,7 +1,7 @@
 package org.jaweze.hello;
 
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.model.CustomerRepository;
+import org.jaweze.hello.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
