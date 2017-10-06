@@ -15,3 +15,6 @@ REST API trace log:
 
 UI:
 - http://localhost:8080
+
+Admin:
+- http://localhost:9080/admin
