@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Customer {
+public class Customer extends Auditable<String>{
 
 	@Id
 	@GeneratedValue
