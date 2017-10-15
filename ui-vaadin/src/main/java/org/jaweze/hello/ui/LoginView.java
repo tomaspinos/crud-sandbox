@@ -44,11 +44,6 @@ public class LoginView extends VerticalLayout implements View {
             // with websocket communication.
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             SecurityContextHolder.getContext().setAuthentication(token);
-            // Now when the session is reinitialized, we can enable websocket communication. Or we could have just
-            // used WEBSOCKET_XHR and skipped this step completely.
-            // TODO
-//            getPushConfiguration().setTransport(Transport.WEBSOCKET);
-//            getPushConfiguration().setPushMode(PushMode.AUTOMATIC);
             // Show the main UI
             navigator.navigateTo("grid");
             return true;

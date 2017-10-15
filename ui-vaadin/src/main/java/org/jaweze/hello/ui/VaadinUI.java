@@ -30,7 +30,7 @@ public class VaadinUI extends UI {
         this.messages = messages;
 
         navigator = new Navigator(this, this);
-        navigator.addView("", new LoginView(authenticationManager, messages));
+        navigator.addView("", new LoginView(authenticationManager, messages, navigator));
         navigator.addView("grid", new GridView(customerApiClient, messages));
         navigator.addView("editor", new EditorView());
     }
