@@ -1,5 +1,6 @@
 package org.jaweze.hello.ui;
 
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -14,6 +15,7 @@ public class GridView extends VerticalLayout implements View {
 
     private final CustomerApiClient customerApiClient;
     private final Messages messages;
+    private final Navigator navigator;
 
     final Grid<Customer> grid;
 
@@ -24,9 +26,10 @@ public class GridView extends VerticalLayout implements View {
 
     private final Logger logger = LoggerFactory.getLogger(GridView.class);
 
-    public GridView(CustomerApiClient customerApiClient, Messages messages) {
+    public GridView(CustomerApiClient customerApiClient, Messages messages, Navigator navigator) {
         this.customerApiClient = customerApiClient;
         this.messages = messages;
+        this.navigator = navigator;
 
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
@@ -68,11 +71,15 @@ public class GridView extends VerticalLayout implements View {
         grid.asSingleSelect().addValueChangeListener(e -> {
             // TODO
 //            editor.editCustomer(e.getValue());
+            navigator.navigateTo("editor/" + e.getValue().getId());
         });
 
         // Instantiate and edit new Customer the new button is clicked
         // TODO
-//        addNewBtn.addClickListener(e -> editor.editCustomer(new Customer("", "", null, null, null)));
+        addNewBtn.addClickListener(e -> {
+//            editor.editCustomer(new Customer("", "", null, null, null))
+            navigator.navigateTo("editor");
+        });
 
         // Listen changes made by the editor, refresh data from backend
         // TODO

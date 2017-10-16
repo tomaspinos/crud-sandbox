@@ -16,23 +16,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class VaadinUI extends UI {
 
     private final AuthenticationManager authenticationManager;
-
     private final Navigator navigator;
-
-    private final CustomerEditor editor;
-
     private final Messages messages;
 
     @Autowired
-    public VaadinUI(AuthenticationManager authenticationManager, CustomerApiClient customerApiClient, CustomerEditor editor, Messages messages) {
+    public VaadinUI(AuthenticationManager authenticationManager, CustomerApiClient customerApiClient, Messages messages) {
         this.authenticationManager = authenticationManager;
-        this.editor = editor;
         this.messages = messages;
 
         navigator = new Navigator(this, this);
         navigator.addView("", new LoginView(authenticationManager, messages, navigator));
-        navigator.addView("grid", new GridView(customerApiClient, messages));
-        navigator.addView("editor", new EditorView());
+        navigator.addView("grid", new GridView(customerApiClient, messages, navigator));
+        navigator.addView("editor", new EditorView(customerApiClient, messages, navigator));
     }
 
     @Override
