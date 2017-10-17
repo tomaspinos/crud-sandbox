@@ -3,6 +3,7 @@ package org.jaweze.hello.ui;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import org.jaweze.hello.CustomerApiClient;
@@ -10,6 +11,7 @@ import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 
 public class GridView extends VerticalLayout implements View {
 
@@ -42,6 +44,7 @@ public class GridView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         logger.debug("Grid view");
+        listCustomers(null);
     }
 
     private void showMain() {
@@ -54,7 +57,7 @@ public class GridView extends VerticalLayout implements View {
         addComponents(logoutBar, actions, grid);
 
         // TODO - necessary?
-//        setErrorHandler(this::handleError);
+        setErrorHandler(this::handleError);
 
         grid.setHeight(300, Unit.PIXELS);
         grid.setColumns("id", "firstName", "lastName", "birthDate");
@@ -69,27 +72,15 @@ public class GridView extends VerticalLayout implements View {
 
         // Connect selected Customer to editor or hide if none is selected
         grid.asSingleSelect().addValueChangeListener(e -> {
-            // TODO
-//            editor.editCustomer(e.getValue());
-            navigator.navigateTo("editor/" + e.getValue().getId());
+            if (e.getValue() != null) {
+                navigator.navigateTo(ViewNames.EDITOR + "/" + e.getValue().getId());
+            }
         });
 
         // Instantiate and edit new Customer the new button is clicked
-        // TODO
-        addNewBtn.addClickListener(e -> {
-//            editor.editCustomer(new Customer("", "", null, null, null))
-            navigator.navigateTo("editor");
-        });
+        addNewBtn.addClickListener(e -> navigator.navigateTo(ViewNames.EDITOR));
 
-        // Listen changes made by the editor, refresh data from backend
-        // TODO
-//        editor.setChangeHandler(() -> {
-//            editor.setVisible(false);
-//            listCustomers(filter.getValue());
-//        });
-
-        // TODO logout
-//        logoutBtn.addClickListener(e -> logout());
+        logoutBtn.addClickListener(e -> logout());
 
         // Initialize listing
         listCustomers(null);
@@ -97,5 +88,19 @@ public class GridView extends VerticalLayout implements View {
 
     void listCustomers(String filterText) {
         grid.setItems(customerApiClient.getAll(filterText));
+    }
+
+    private void logout() {
+        getUI().getPage().reload();
+        getSession().close();
+    }
+
+    private void handleError(com.vaadin.server.ErrorEvent event) {
+        Throwable t = DefaultErrorHandler.findRelevantThrowable(event.getThrowable());
+        if (t instanceof AccessDeniedException) {
+            Notification.show(messages.get("main_screen.no_permission"), Notification.Type.WARNING_MESSAGE);
+        } else {
+            DefaultErrorHandler.doDefault(event);
+        }
     }
 }

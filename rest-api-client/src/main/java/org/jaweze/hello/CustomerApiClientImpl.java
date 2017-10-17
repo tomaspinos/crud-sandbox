@@ -1,8 +1,11 @@
 package org.jaweze.hello;
 
 import org.jaweze.hello.model.Customer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -12,6 +15,8 @@ public class CustomerApiClientImpl implements CustomerApiClient {
 
     private final RestTemplate restTemplate;
     private final String url;
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerApiClientImpl.class);
 
     public CustomerApiClientImpl() {
         restTemplate = new RestTemplate();
@@ -25,7 +30,12 @@ public class CustomerApiClientImpl implements CustomerApiClient {
 
     @Override
     public Optional<Customer> getById(long customerId) {
-        return Optional.ofNullable(restTemplate.getForObject(url + "/customer/" + customerId, Customer.class));
+        try {
+            return Optional.of(restTemplate.getForObject(url + "/customer/" + customerId, Customer.class));
+        } catch (HttpStatusCodeException e) {
+            logger.error("Error while getting customer by id {}", customerId, e);
+            return Optional.empty();
+        }
     }
 
     @Override

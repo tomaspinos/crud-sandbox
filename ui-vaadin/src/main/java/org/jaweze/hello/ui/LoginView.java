@@ -45,7 +45,7 @@ public class LoginView extends VerticalLayout implements View {
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
             SecurityContextHolder.getContext().setAuthentication(token);
             // Show the main UI
-            navigator.navigateTo("grid");
+            navigator.navigateTo(ViewNames.GRID);
             return true;
         } catch (AuthenticationException ex) {
             return false;

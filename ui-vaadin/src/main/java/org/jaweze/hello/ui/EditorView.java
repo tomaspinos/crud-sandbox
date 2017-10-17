@@ -41,6 +41,7 @@ public class EditorView extends VerticalLayout implements View {
     ComboBox<MarriageStatus> marriageStatus;
 
     /* Action buttons */
+    Button back;
     Button save;
     Button cancel;
     Button delete;
@@ -61,6 +62,7 @@ public class EditorView extends VerticalLayout implements View {
         sex = new ComboBox<>(messages.get("customer_editor.sex"), Arrays.asList(Sex.values()));
         marriageStatus = new ComboBox<>(messages.get("customer_editor.marriageStatus"), Arrays.asList(MarriageStatus.values()));
 
+        back = new Button(messages.get("customer_editor.back"));
         save = new Button(messages.get("customer_editor.save"), FontAwesome.SAVE);
         cancel = new Button(messages.get("customer_editor.cancel"));
         delete = new Button(messages.get("customer_editor.delete"), FontAwesome.TRASH_O);
@@ -70,7 +72,7 @@ public class EditorView extends VerticalLayout implements View {
 
         marriageStatus.setItemCaptionGenerator(item -> messages.get("codebook.marriageStatus." + item.name()));
 
-        addComponents(firstName, lastName, birthDate, sex, marriageStatus, actions);
+        addComponents(back, firstName, lastName, birthDate, sex, marriageStatus, actions);
 
         // bind using naming convention
         binder.bindInstanceFields(this);
@@ -79,13 +81,15 @@ public class EditorView extends VerticalLayout implements View {
         setSpacing(true);
         actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
+        back.addClickListener(e -> back());
+
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e -> customerApiClient.update(customer));
+        save.addClickListener(e -> save());
 
-        cancel.addClickListener(e -> editCustomer(customer));
+        cancel.addClickListener(e -> cancel());
 
-        delete.addClickListener(e -> customerApiClient.delete(customer.getId()));
+        delete.addClickListener(e -> delete());
 
         setVisible(false);
     }
@@ -96,10 +100,33 @@ public class EditorView extends VerticalLayout implements View {
 
         if (StringUtils.hasText(e.getParameters())) {
             Optional<Customer> maybeCustomer = customerApiClient.getById(Long.parseLong(e.getParameters()));
-            editCustomer(maybeCustomer.orElse(null));
+            if (maybeCustomer.isPresent()) {
+                editCustomer(maybeCustomer.get());
+            } else {
+                Notification.show(messages.get("customer_editor.notFound"), Notification.Type.WARNING_MESSAGE);
+                editCustomer(null);
+            }
         } else {
             editCustomer(null);
         }
+    }
+
+    private void back() {
+        navigator.navigateTo(ViewNames.GRID);
+    }
+
+    private void save() {
+        customerApiClient.update(customer);
+        back();
+    }
+
+    private void cancel() {
+        editCustomer(customer);
+    }
+
+    private void delete() {
+        customerApiClient.delete(customer.getId());
+        back();
     }
 
     private final void editCustomer(Customer c) {
@@ -131,13 +158,6 @@ public class EditorView extends VerticalLayout implements View {
         firstName.selectAll();
     }
 
-    public void setChangeHandler(ChangeHandler h) {
-        // ChangeHandler is notified when either save or delete
-        // is clicked
-        save.addClickListener(e -> h.onChange());
-        delete.addClickListener(e -> h.onChange());
-    }
-
     private void checkAuthorization() {
         boolean isManager = SecurityUtils.hasRole(CustomRoles.MANAGER);
 
@@ -146,10 +166,5 @@ public class EditorView extends VerticalLayout implements View {
         save.setEnabled(isManager);
         cancel.setEnabled(isManager);
         delete.setEnabled(isManager);
-    }
-
-    public interface ChangeHandler {
-
-        void onChange();
     }
 }
