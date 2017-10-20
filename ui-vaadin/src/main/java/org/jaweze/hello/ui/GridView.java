@@ -1,37 +1,51 @@
 package org.jaweze.hello.ui;
 
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.*;
-import org.jaweze.hello.CustomerApiClient;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridView extends VerticalLayout implements View {
 
-    private final CustomerApiClient customerApiClient;
     private final Messages messages;
-    private final Navigator navigator;
 
-    final Grid<Customer> grid;
+    private final List<GridViewListener> listeners = new ArrayList<>();
 
-    final TextField filter;
-
+    private final Grid<Customer> grid;
+    private final TextField filter;
     private final Button logoutBtn;
     private final Button addNewBtn;
 
     private final Logger logger = LoggerFactory.getLogger(GridView.class);
 
-    public GridView(CustomerApiClient customerApiClient, Messages messages, Navigator navigator) {
-        this.customerApiClient = customerApiClient;
+    public interface GridViewListener {
+
+        void onViewEntry();
+
+        void onFilterSpecified(String filterText);
+
+        void onCustomerSelected(Customer customer);
+
+        void onAddNewCustomer();
+    }
+
+    public GridView(Messages messages) {
         this.messages = messages;
-        this.navigator = navigator;
 
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
@@ -44,7 +58,15 @@ public class GridView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         logger.debug("Grid view");
-        listCustomers(null);
+        listeners.forEach(GridViewListener::onViewEntry);
+    }
+
+    public void addListener(GridViewListener listener) {
+        listeners.add(listener);
+    }
+
+    public void listCustomers(List<Customer> customers) {
+        grid.setItems(customers);
     }
 
     private void showMain() {
@@ -68,26 +90,18 @@ public class GridView extends VerticalLayout implements View {
 
         // Replace listing with filtered content when user changes filter
         filter.setValueChangeMode(ValueChangeMode.LAZY);
-        filter.addValueChangeListener(e -> listCustomers(e.getValue()));
+        filter.addValueChangeListener(e -> listeners.forEach(l -> l.onFilterSpecified(e.getValue())));
 
         // Connect selected Customer to editor or hide if none is selected
-        grid.asSingleSelect().addValueChangeListener(e -> {
-            if (e.getValue() != null) {
-                navigator.navigateTo(ViewNames.EDITOR + "/" + e.getValue().getId());
-            }
-        });
+        grid.asSingleSelect().addValueChangeListener(e -> listeners.forEach(l -> l.onCustomerSelected(e.getValue())));
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> navigator.navigateTo(ViewNames.EDITOR));
+        addNewBtn.addClickListener(e -> listeners.forEach(GridViewListener::onAddNewCustomer));
 
         logoutBtn.addClickListener(e -> logout());
 
         // Initialize listing
         listCustomers(null);
-    }
-
-    void listCustomers(String filterText) {
-        grid.setItems(customerApiClient.getAll(filterText));
     }
 
     private void logout() {

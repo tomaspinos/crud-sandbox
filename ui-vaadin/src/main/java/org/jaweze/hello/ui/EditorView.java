@@ -2,13 +2,17 @@ package org.jaweze.hello.ui;
 
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.DateField;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
-import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
@@ -17,21 +21,16 @@ import org.jaweze.hello.security.SecurityUtils;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
 
 public class EditorView extends VerticalLayout implements View {
 
-    private final CustomerApiClient customerApiClient;
     private final Messages messages;
-    private final Navigator navigator;
 
-    /**
-     * The currently edited customer
-     */
-    private Customer customer;
+    private final List<EditorViewListener> listeners = new ArrayList<>();
 
     /* Fields to edit properties in Customer entity */
     TextField firstName;
@@ -51,10 +50,21 @@ public class EditorView extends VerticalLayout implements View {
 
     private final Logger logger = LoggerFactory.getLogger(EditorView.class);
 
-    public EditorView(CustomerApiClient customerApiClient, Messages messages, Navigator navigator) {
-        this.customerApiClient = customerApiClient;
+    public interface EditorViewListener {
+
+        void onViewEntry(String parameters);
+
+        void onBack();
+
+        void onSave();
+
+        void onCancel();
+
+        void onDelete();
+    }
+
+    public EditorView(Messages messages) {
         this.messages = messages;
-        this.navigator = navigator;
 
         firstName = new TextField(messages.get("customer_editor.firstName"));
         lastName = new TextField(messages.get("customer_editor.lastName"));
@@ -81,15 +91,15 @@ public class EditorView extends VerticalLayout implements View {
         setSpacing(true);
         actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
-        back.addClickListener(e -> back());
+        back.addClickListener(e -> listeners.forEach(EditorViewListener::onBack));
 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e -> save());
+        save.addClickListener(e -> listeners.forEach(EditorViewListener::onSave));
 
-        cancel.addClickListener(e -> cancel());
+        cancel.addClickListener(e -> listeners.forEach(EditorViewListener::onCancel));
 
-        delete.addClickListener(e -> delete());
+        delete.addClickListener(e -> listeners.forEach(EditorViewListener::onDelete));
 
         setVisible(false);
     }
@@ -97,52 +107,14 @@ public class EditorView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent e) {
         logger.debug("Editor view for parameters {}", e.getParameters());
-
-        if (StringUtils.hasText(e.getParameters())) {
-            Optional<Customer> maybeCustomer = customerApiClient.getById(Long.parseLong(e.getParameters()));
-            if (maybeCustomer.isPresent()) {
-                editCustomer(maybeCustomer.get());
-            } else {
-                Notification.show(messages.get("customer_editor.notFound"), Notification.Type.WARNING_MESSAGE);
-                editCustomer(null);
-            }
-        } else {
-            editCustomer(null);
-        }
+        listeners.forEach(l -> l.onViewEntry(e.getParameters()));
     }
 
-    private void back() {
-        navigator.navigateTo(ViewNames.GRID);
+    public void addListener(EditorViewListener listener) {
+        listeners.addAll(listeners);
     }
 
-    private void save() {
-        customerApiClient.update(customer);
-        back();
-    }
-
-    private void cancel() {
-        editCustomer(customer);
-    }
-
-    private void delete() {
-        customerApiClient.delete(customer.getId());
-        back();
-    }
-
-    private final void editCustomer(Customer c) {
-        if (c == null) {
-            setVisible(false);
-            return;
-        }
-        final boolean persisted = c.getId() != null;
-        if (persisted) {
-            // Find fresh entity for editing
-            customer = customerApiClient.getById(c.getId()).get();
-        } else {
-            customer = c;
-        }
-        cancel.setVisible(persisted);
-
+    public final void showCustomer(Customer customer) {
         checkAuthorization();
 
         // Bind customer properties to similarly named fields
@@ -150,12 +122,14 @@ public class EditorView extends VerticalLayout implements View {
         // moving values from fields to entities before saving
         binder.setBean(customer);
 
-        setVisible(true);
-
         // A hack to ensure the whole form is visible
         save.focus();
         // Select all text in firstName field automatically
         firstName.selectAll();
+    }
+
+    public void showNotFoundError() {
+        Notification.show(messages.get("customer_editor.notFound"), Notification.Type.WARNING_MESSAGE);
     }
 
     private void checkAuthorization() {
