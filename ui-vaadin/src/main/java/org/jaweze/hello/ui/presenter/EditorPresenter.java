@@ -21,11 +21,10 @@ public class EditorPresenter implements EditorView.EditorViewListener {
     private final Navigator navigator;
     private EditorView view;
 
-    public EditorPresenter(CustomerApiClient customerApiClient, Navigator navigator) {
+    public EditorPresenter(EditorModel model, CustomerApiClient customerApiClient, Navigator navigator) {
+        this.model = model;
         this.customerApiClient = customerApiClient;
         this.navigator = navigator;
-
-        model = new EditorModel();
     }
 
     @Override

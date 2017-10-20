@@ -18,11 +18,10 @@ public class GridPresenter implements GridView.GridViewListener {
     private final Navigator navigator;
     private GridView view;
 
-    public GridPresenter(CustomerApiClient customerApiClient, Navigator navigator) {
+    public GridPresenter(GridModel model, CustomerApiClient customerApiClient, Navigator navigator) {
+        this.model = model;
         this.customerApiClient = customerApiClient;
         this.navigator = navigator;
-
-        model = new GridModel();
     }
 
     @Override
