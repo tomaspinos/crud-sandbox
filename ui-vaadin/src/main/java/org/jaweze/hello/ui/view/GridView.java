@@ -1,16 +1,10 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.view;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.shared.ui.ValueChangeMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
@@ -99,9 +93,6 @@ public class GridView extends VerticalLayout implements View {
         addNewBtn.addClickListener(e -> listeners.forEach(GridViewListener::onAddNewCustomer));
 
         logoutBtn.addClickListener(e -> logout());
-
-        // Initialize listing
-        listCustomers(null);
     }
 
     private void logout() {

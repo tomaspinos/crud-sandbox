@@ -1,8 +1,11 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.presenter;
 
 import com.vaadin.navigator.Navigator;
 import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.ui.ViewNames;
+import org.jaweze.hello.ui.model.EditorModel;
+import org.jaweze.hello.ui.view.EditorView;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
@@ -36,6 +39,7 @@ public class EditorViewPresenter implements EditorView.EditorViewListener {
             }
         } else {
             model.setCustomer(new Customer());
+            view.showCustomer(model.getCustomer());
         }
     }
 
@@ -48,11 +52,6 @@ public class EditorViewPresenter implements EditorView.EditorViewListener {
     public void onSave() {
         customerApiClient.update(model.getCustomer());
         onBack();
-    }
-
-    @Override
-    public void onCancel() {
-        view.showCustomer(model.getCustomer());
     }
 
     @Override

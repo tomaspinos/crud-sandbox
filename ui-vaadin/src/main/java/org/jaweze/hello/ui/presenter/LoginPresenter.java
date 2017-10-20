@@ -1,7 +1,9 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.presenter;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinService;
+import org.jaweze.hello.ui.ViewNames;
+import org.jaweze.hello.ui.view.LoginView;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

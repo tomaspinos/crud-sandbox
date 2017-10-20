@@ -1,4 +1,4 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.model;
 
 import org.jaweze.hello.model.Customer;
 

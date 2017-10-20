@@ -1,8 +1,11 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.presenter;
 
 import com.vaadin.navigator.Navigator;
 import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.ui.ViewNames;
+import org.jaweze.hello.ui.model.GridModel;
+import org.jaweze.hello.ui.view.GridView;
 
 public class GridPresenter implements GridView.GridViewListener {
 

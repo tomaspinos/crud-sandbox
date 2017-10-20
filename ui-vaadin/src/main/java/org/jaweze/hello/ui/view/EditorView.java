@@ -1,17 +1,11 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.view;
 
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.model.MarriageStatus;
@@ -42,7 +36,6 @@ public class EditorView extends VerticalLayout implements View {
     /* Action buttons */
     Button back;
     Button save;
-    Button cancel;
     Button delete;
     CssLayout actions;
 
@@ -58,8 +51,6 @@ public class EditorView extends VerticalLayout implements View {
 
         void onSave();
 
-        void onCancel();
-
         void onDelete();
     }
 
@@ -74,9 +65,8 @@ public class EditorView extends VerticalLayout implements View {
 
         back = new Button(messages.get("customer_editor.back"));
         save = new Button(messages.get("customer_editor.save"), FontAwesome.SAVE);
-        cancel = new Button(messages.get("customer_editor.cancel"));
         delete = new Button(messages.get("customer_editor.delete"), FontAwesome.TRASH_O);
-        actions = new CssLayout(save, cancel, delete);
+        actions = new CssLayout(save, delete);
 
         sex.setItemCaptionGenerator(item -> messages.get("codebook.sex." + item.name()));
 
@@ -97,11 +87,7 @@ public class EditorView extends VerticalLayout implements View {
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         save.addClickListener(e -> listeners.forEach(EditorViewListener::onSave));
 
-        cancel.addClickListener(e -> listeners.forEach(EditorViewListener::onCancel));
-
         delete.addClickListener(e -> listeners.forEach(EditorViewListener::onDelete));
-
-        setVisible(false);
     }
 
     @Override
@@ -111,7 +97,7 @@ public class EditorView extends VerticalLayout implements View {
     }
 
     public void addListener(EditorViewListener listener) {
-        listeners.addAll(listeners);
+        listeners.add(listener);
     }
 
     public final void showCustomer(Customer customer) {
@@ -138,7 +124,6 @@ public class EditorView extends VerticalLayout implements View {
         firstName.setEnabled(isManager);
         lastName.setEnabled(isManager);
         save.setEnabled(isManager);
-        cancel.setEnabled(isManager);
         delete.setEnabled(isManager);
     }
 }

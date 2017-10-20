@@ -1,4 +1,4 @@
-package org.jaweze.hello.ui;
+package org.jaweze.hello.ui.view;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
