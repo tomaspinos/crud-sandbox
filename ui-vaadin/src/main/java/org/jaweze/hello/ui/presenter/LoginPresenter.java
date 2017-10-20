@@ -2,6 +2,8 @@ package org.jaweze.hello.ui.presenter;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinService;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.ViewScope;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.ui.view.LoginView;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,23 +12,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+@SpringComponent
+@ViewScope
 public class LoginPresenter implements LoginView.LoginViewListener {
 
-    private final LoginView view;
     private final AuthenticationManager authenticationManager;
     private final Navigator navigator;
+    private LoginView view;
 
-    public LoginPresenter(LoginView view, AuthenticationManager authenticationManager, Navigator navigator) {
-        this.view = view;
+    public LoginPresenter(AuthenticationManager authenticationManager, Navigator navigator) {
         this.authenticationManager = authenticationManager;
         this.navigator = navigator;
-
-        view.addListener(this);
     }
 
     @Override
-    public void onViewEntry() {
-        // do nothing
+    public void onViewEntry(LoginView view) {
+        this.view = view;
     }
 
     @Override

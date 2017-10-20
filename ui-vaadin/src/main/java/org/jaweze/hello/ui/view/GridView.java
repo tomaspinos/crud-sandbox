@@ -4,8 +4,11 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.DefaultErrorHandler;
 import com.vaadin.shared.ui.ValueChangeMode;
+import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.jaweze.hello.model.Customer;
+import org.jaweze.hello.ui.ViewNames;
+import org.jaweze.hello.ui.presenter.GridPresenter;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import org.springframework.security.access.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SpringView(name = ViewNames.GRID)
 public class GridView extends VerticalLayout implements View {
 
     private final Messages messages;
@@ -29,7 +33,7 @@ public class GridView extends VerticalLayout implements View {
 
     public interface GridViewListener {
 
-        void onViewEntry();
+        void onViewEntry(GridView view);
 
         void onFilterSpecified(String filterText);
 
@@ -38,8 +42,10 @@ public class GridView extends VerticalLayout implements View {
         void onAddNewCustomer();
     }
 
-    public GridView(Messages messages) {
+    public GridView(GridPresenter presenter, Messages messages) {
         this.messages = messages;
+
+        listeners.add(presenter);
 
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
@@ -52,7 +58,7 @@ public class GridView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         logger.debug("Grid view");
-        listeners.forEach(GridViewListener::onViewEntry);
+        listeners.forEach(l -> l.onViewEntry(this));
     }
 
     public void addListener(GridViewListener listener) {

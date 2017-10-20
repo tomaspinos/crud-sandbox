@@ -1,30 +1,34 @@
 package org.jaweze.hello.ui.presenter;
 
 import com.vaadin.navigator.Navigator;
+import com.vaadin.spring.annotation.SpringComponent;
+import com.vaadin.spring.annotation.ViewScope;
 import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.ui.model.GridModel;
 import org.jaweze.hello.ui.view.GridView;
 
+@SpringComponent
+@ViewScope
 public class GridPresenter implements GridView.GridViewListener {
 
-    private final GridView view;
     private final GridModel model;
     private final CustomerApiClient customerApiClient;
     private final Navigator navigator;
+    private GridView view;
 
-    public GridPresenter(GridView view, CustomerApiClient customerApiClient, Navigator navigator) {
-        this.view = view;
+    public GridPresenter(CustomerApiClient customerApiClient, Navigator navigator) {
         this.customerApiClient = customerApiClient;
         this.navigator = navigator;
 
         model = new GridModel();
-        view.addListener(this);
     }
 
     @Override
-    public void onViewEntry() {
+    public void onViewEntry(GridView view) {
+        this.view = view;
+
         model.setCustomers(customerApiClient.getAll(null));
         view.listCustomers(model.getCustomers());
     }

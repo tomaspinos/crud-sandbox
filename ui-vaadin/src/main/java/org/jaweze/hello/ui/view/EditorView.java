@@ -5,6 +5,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.jaweze.hello.model.Customer;
@@ -12,6 +13,8 @@ import org.jaweze.hello.model.MarriageStatus;
 import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;
 import org.jaweze.hello.security.SecurityUtils;
+import org.jaweze.hello.ui.ViewNames;
+import org.jaweze.hello.ui.presenter.EditorPresenter;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SpringView(name = ViewNames.EDITOR)
 public class EditorView extends VerticalLayout implements View {
 
     private final Messages messages;
@@ -45,7 +49,7 @@ public class EditorView extends VerticalLayout implements View {
 
     public interface EditorViewListener {
 
-        void onViewEntry(String parameters);
+        void onViewEntry(EditorView view, String parameters);
 
         void onBack();
 
@@ -54,8 +58,10 @@ public class EditorView extends VerticalLayout implements View {
         void onDelete();
     }
 
-    public EditorView(Messages messages) {
+    public EditorView(EditorPresenter presenter, Messages messages) {
         this.messages = messages;
+
+        listeners.add(presenter);
 
         firstName = new TextField(messages.get("customer_editor.firstName"));
         lastName = new TextField(messages.get("customer_editor.lastName"));
@@ -93,7 +99,7 @@ public class EditorView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent e) {
         logger.debug("Editor view for parameters {}", e.getParameters());
-        listeners.forEach(l -> l.onViewEntry(e.getParameters()));
+        listeners.forEach(l -> l.onViewEntry(this, e.getParameters()));
     }
 
     public void addListener(EditorViewListener listener) {
