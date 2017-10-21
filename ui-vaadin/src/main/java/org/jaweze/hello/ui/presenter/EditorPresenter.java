@@ -8,13 +8,14 @@ import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.ui.model.EditorModel;
 import org.jaweze.hello.ui.view.EditorView;
+import org.jaweze.hello.ui.view.EditorViewListener;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
 @SpringComponent
 @ViewScope
-public class EditorPresenter implements EditorView.EditorViewListener {
+public class EditorPresenter implements EditorViewListener {
 
     private final EditorModel model;
     private final CustomerApiClient customerApiClient;

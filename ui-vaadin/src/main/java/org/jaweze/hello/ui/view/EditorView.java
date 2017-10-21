@@ -14,21 +14,17 @@ import org.jaweze.hello.model.Sex;
 import org.jaweze.hello.security.CustomRoles;
 import org.jaweze.hello.security.SecurityUtils;
 import org.jaweze.hello.ui.ViewNames;
-import org.jaweze.hello.ui.presenter.EditorPresenter;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @SpringView(name = ViewNames.EDITOR)
 public class EditorView extends VerticalLayout implements View {
 
+    private final EditorViewListener listener;
     private final Messages messages;
-
-    private final List<EditorViewListener> listeners = new ArrayList<>();
 
     /* Fields to edit properties in Customer entity */
     TextField firstName;
@@ -47,21 +43,9 @@ public class EditorView extends VerticalLayout implements View {
 
     private final Logger logger = LoggerFactory.getLogger(EditorView.class);
 
-    public interface EditorViewListener {
-
-        void onViewEntry(EditorView view, String parameters);
-
-        void onBack();
-
-        void onSave();
-
-        void onDelete();
-    }
-
-    public EditorView(EditorPresenter presenter, Messages messages) {
+    public EditorView(EditorViewListener listener, Messages messages) {
+        this.listener = listener;
         this.messages = messages;
-
-        listeners.add(presenter);
 
         firstName = new TextField(messages.get("customer_editor.firstName"));
         lastName = new TextField(messages.get("customer_editor.lastName"));
@@ -87,23 +71,19 @@ public class EditorView extends VerticalLayout implements View {
         setSpacing(true);
         actions.setStyleName(ValoTheme.LAYOUT_COMPONENT_GROUP);
 
-        back.addClickListener(e -> listeners.forEach(EditorViewListener::onBack));
+        back.addClickListener(e -> listener.onBack());
 
         save.setStyleName(ValoTheme.BUTTON_PRIMARY);
         save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        save.addClickListener(e -> listeners.forEach(EditorViewListener::onSave));
+        save.addClickListener(e -> listener.onSave());
 
-        delete.addClickListener(e -> listeners.forEach(EditorViewListener::onDelete));
+        delete.addClickListener(e -> listener.onDelete());
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent e) {
         logger.debug("Editor view for parameters {}", e.getParameters());
-        listeners.forEach(l -> l.onViewEntry(this, e.getParameters()));
-    }
-
-    public void addListener(EditorViewListener listener) {
-        listeners.add(listener);
+        listener.onViewEntry(this, e.getParameters());
     }
 
     public final void showCustomer(Customer customer) {

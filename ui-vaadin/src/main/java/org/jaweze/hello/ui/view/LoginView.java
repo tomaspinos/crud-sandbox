@@ -7,46 +7,29 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.ui.ViewNames;
-import org.jaweze.hello.ui.presenter.LoginPresenter;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SpringView(name = ViewNames.LOGIN)
 public class LoginView extends VerticalLayout implements View {
 
+    private final LoginViewListener listener;
     private final Messages messages;
-
-    private final List<LoginViewListener> listeners = new ArrayList<>();
 
     private final Logger logger = LoggerFactory.getLogger(LoginView.class);
 
-    public interface LoginViewListener {
-
-        void onViewEntry(LoginView view);
-
-        void onLogin(String username, String password);
-    }
-
-    public LoginView(LoginPresenter presenter, Messages messages) {
+    public LoginView(LoginViewListener listener, Messages messages) {
+        this.listener = listener;
         this.messages = messages;
 
-        listeners.add(presenter);
-
-        addComponent(new LoginForm((username, password) -> listeners.forEach(l -> l.onLogin(username, password)), messages));
+        addComponent(new LoginForm(listener::onLogin, messages));
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         logger.debug("Login view");
-        listeners.forEach(l -> l.onViewEntry(this));
-    }
-
-    public void addListener(LoginViewListener listener) {
-        listeners.add(listener);
+        listener.onViewEntry(this);
     }
 
     public void showLoginFailure() {

@@ -8,21 +8,18 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.ui.ViewNames;
-import org.jaweze.hello.ui.presenter.GridPresenter;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SpringView(name = ViewNames.GRID)
 public class GridView extends VerticalLayout implements View {
 
+    private final GridViewListener listener;
     private final Messages messages;
-
-    private final List<GridViewListener> listeners = new ArrayList<>();
 
     private final Grid<Customer> grid;
     private final TextField filter;
@@ -31,21 +28,9 @@ public class GridView extends VerticalLayout implements View {
 
     private final Logger logger = LoggerFactory.getLogger(GridView.class);
 
-    public interface GridViewListener {
-
-        void onViewEntry(GridView view);
-
-        void onFilterSpecified(String filterText);
-
-        void onCustomerSelected(Customer customer);
-
-        void onAddNewCustomer();
-    }
-
-    public GridView(GridPresenter presenter, Messages messages) {
+    public GridView(GridViewListener listener, Messages messages) {
+        this.listener = listener;
         this.messages = messages;
-
-        listeners.add(presenter);
 
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
@@ -58,11 +43,7 @@ public class GridView extends VerticalLayout implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         logger.debug("Grid view");
-        listeners.forEach(l -> l.onViewEntry(this));
-    }
-
-    public void addListener(GridViewListener listener) {
-        listeners.add(listener);
+        listener.onViewEntry(this);
     }
 
     public void listCustomers(List<Customer> customers) {
@@ -90,13 +71,13 @@ public class GridView extends VerticalLayout implements View {
 
         // Replace listing with filtered content when user changes filter
         filter.setValueChangeMode(ValueChangeMode.LAZY);
-        filter.addValueChangeListener(e -> listeners.forEach(l -> l.onFilterSpecified(e.getValue())));
+        filter.addValueChangeListener(e -> listener.onFilterSpecified(e.getValue()));
 
         // Connect selected Customer to editor or hide if none is selected
-        grid.asSingleSelect().addValueChangeListener(e -> listeners.forEach(l -> l.onCustomerSelected(e.getValue())));
+        grid.asSingleSelect().addValueChangeListener(e -> listener.onCustomerSelected(e.getValue()));
 
         // Instantiate and edit new Customer the new button is clicked
-        addNewBtn.addClickListener(e -> listeners.forEach(GridViewListener::onAddNewCustomer));
+        addNewBtn.addClickListener(e -> listener.onAddNewCustomer());
 
         logoutBtn.addClickListener(e -> logout());
     }
