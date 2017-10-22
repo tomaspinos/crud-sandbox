@@ -35,6 +35,8 @@ public class GridView extends VerticalLayout implements View {
         this.grid = new Grid<>(Customer.class);
         this.filter = new TextField();
         this.logoutBtn = new Button(messages.get("main_screen.logout"));
+        this.logoutBtn.setId("logout-button");
+
         this.addNewBtn = new Button(messages.get("main_screen.new_customer"));
 
         showMain();
