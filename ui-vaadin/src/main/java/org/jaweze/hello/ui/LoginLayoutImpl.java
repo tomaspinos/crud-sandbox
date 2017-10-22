@@ -2,7 +2,6 @@ package org.jaweze.hello.ui;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.ClassResource;
-import com.vaadin.ui.Notification;
 import org.jaweze.hello.utils.Messages;
 
 public class LoginLayoutImpl extends LoginLayout {
@@ -21,17 +20,15 @@ public class LoginLayoutImpl extends LoginLayout {
         loginButton.addClickListener(evt -> {
             String pword = password.getValue();
             password.setValue("");
-            if (!callback.login(username.getValue(), pword)) {
-                Notification.show(messages.get("login.failure"));
-                username.focus();
-            }
+            callback.login(username.getValue(), pword);
         });
+
         loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
     }
 
     @FunctionalInterface
     public interface LoginCallback {
-        boolean login(String username, String password);
+        void login(String username, String password);
     }
 
 }

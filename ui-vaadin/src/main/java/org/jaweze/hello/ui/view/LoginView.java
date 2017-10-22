@@ -5,7 +5,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
-import org.jaweze.hello.security.LoginForm;
+import org.jaweze.hello.ui.LoginLayoutImpl;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.utils.Messages;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class LoginView extends VerticalLayout implements View {
         this.listener = listener;
         this.messages = messages;
 
-        addComponent(new LoginForm(listener::onLogin, messages));
+        addComponent(new LoginLayoutImpl(listener::onLogin, messages));
     }
 
     @Override
