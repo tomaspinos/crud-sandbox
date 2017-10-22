@@ -1,7 +1,10 @@
 package org.jaweze.hello.security;
 
 import com.vaadin.event.ShortcutAction;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.PasswordField;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import org.jaweze.hello.utils.Messages;
 
 public class LoginForm extends VerticalLayout {
@@ -22,10 +25,7 @@ public class LoginForm extends VerticalLayout {
         Button login = new Button(messages.get("login.login"), evt -> {
             String pword = password.getValue();
             password.setValue("");
-            if (!callback.login(username.getValue(), pword)) {
-                Notification.show(messages.get("login.failure"));
-                username.focus();
-            }
+            callback.login(username.getValue(), pword);
         });
         login.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         addComponent(login);
@@ -34,6 +34,6 @@ public class LoginForm extends VerticalLayout {
     @FunctionalInterface
     public interface LoginCallback {
 
-        boolean login(String username, String password);
+        void login(String username, String password);
     }
 }

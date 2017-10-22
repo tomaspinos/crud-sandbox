@@ -2,7 +2,11 @@ package org.jaweze.hello;
 
 import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.repository.CustomerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +16,8 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerRepository repository;
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
     @Autowired
     public CustomerController(CustomerRepository repository) {
@@ -28,8 +34,11 @@ public class CustomerController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public Customer findOne(@PathVariable long customerId) {
-        return repository.getOne(customerId);
+    public ResponseEntity<Customer> findOne(@PathVariable long customerId) {
+        Customer customer = repository.findOne(customerId);
+        return customer != null ?
+                new ResponseEntity<>(customer, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/customer")
