@@ -10,7 +10,6 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.jaweze.hello.CustomerApiClient;
 import org.jaweze.hello.model.Customer;
-import org.jaweze.hello.security.LoginForm;
 import org.jaweze.hello.security.SecurityUtils;
 import org.jaweze.hello.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class VaadinUI extends UI {
     }
 
     private void showLogin() {
-        setContent(new LoginForm(this::login, messages));
+        setContent(new LoginLayoutImpl(this::login, messages));
     }
 
     private void showMain() {

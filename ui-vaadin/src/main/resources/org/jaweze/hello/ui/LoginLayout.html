@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;GENERATE_GETTERS&quot;:false,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;valo&quot;}">
+  <meta name="vaadin-version" content="8.0.5">
+ </head>
+ <body>
+  <vaadin-vertical-layout responsive size-full>
+   <vaadin-image width="562px" height="136px" _id="topLogo" :center></vaadin-image>
+   <vaadin-panel width="526px" height="250px" _id="panel1" :center :expand>
+    <vaadin-grid-layout caption="Hello" spacing width="436px" margin>
+     <row>
+      <column>
+       <vaadin-label plain-text _id="usernameLabel" :middle :center>
+         Username 
+       </vaadin-label>
+      </column>
+      <column>
+       <vaadin-text-field placeholder="Username" _id="username"></vaadin-text-field>
+      </column>
+     </row>
+     <row>
+      <column>
+       <vaadin-label plain-text _id="passwordLabel" :middle :center>
+         Password 
+       </vaadin-label>
+      </column>
+      <column>
+       <vaadin-text-field placeholder="Password" _id="password"></vaadin-text-field>
+      </column>
+     </row>
+     <row>
+      <column>
+       <vaadin-button plain-text _id="loginButton" :middle :center>
+         Login 
+       </vaadin-button>
+      </column>
+     </row>
+    </vaadin-grid-layout>
+   </vaadin-panel>
+  </vaadin-vertical-layout>
+ </body>
+</html>

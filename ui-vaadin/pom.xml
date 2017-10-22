@@ -7,6 +7,10 @@
 
     <artifactId>ui-vaadin</artifactId>
 
+    <properties>
+        <jacoco.version>0.7.9</jacoco.version>
+    </properties>
+
     <parent>
         <groupId>org.jaweze</groupId>
         <artifactId>crud-sandbox</artifactId>
@@ -29,10 +33,6 @@
         <dependency>
             <groupId>org.jaweze</groupId>
             <artifactId>model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jaweze</groupId>
-            <artifactId>rest-api-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jaweze</groupId>
@@ -63,10 +63,22 @@
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.7.9</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -79,6 +91,40 @@
                         <goals>
                             <goal>build-info</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Sets the path to the file which contains the execution data. -->
+
+                            <dataFile>target/jacoco.exec</dataFile>
+                            <!-- Sets the output directory for the code coverage report. -->
+                            <outputDirectory>target/jacoco-ut</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
