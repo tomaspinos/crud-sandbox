@@ -6,7 +6,6 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.ViewScope;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.ui.view.LoginView;
-import org.jaweze.hello.ui.view.LoginViewListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @SpringComponent
 @ViewScope
-public class LoginPresenter implements LoginViewListener {
+public class LoginPresenter implements LoginView.LoginViewListener {
 
     private final AuthenticationManager authenticationManager;
     private final Navigator navigator;

@@ -8,11 +8,10 @@ import org.jaweze.hello.model.Customer;
 import org.jaweze.hello.ui.ViewNames;
 import org.jaweze.hello.ui.model.GridModel;
 import org.jaweze.hello.ui.view.GridView;
-import org.jaweze.hello.ui.view.GridViewListener;
 
 @SpringComponent
 @ViewScope
-public class GridPresenter implements GridViewListener {
+public class GridPresenter implements GridView.GridViewListener {
 
     private final GridModel model;
     private final CustomerApiClient customerApiClient;

@@ -4,9 +4,11 @@ import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.ViewScope;
 import org.jaweze.hello.model.Customer;
 
+import java.io.Serializable;
+
 @SpringComponent
 @ViewScope
-public class EditorModel {
+public class EditorModel implements Serializable {
 
     private Customer customer;
 
